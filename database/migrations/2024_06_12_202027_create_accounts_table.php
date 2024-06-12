@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
+            $table->string('code', 5)->unique();
+            $table->string('name', 90)->unique();
+            $table->string('status', 1);
+            $table->string('type', 90);
             $table->timestamps();
         });
     }

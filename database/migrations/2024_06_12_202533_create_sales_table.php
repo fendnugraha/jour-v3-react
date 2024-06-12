@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->dateTime('date_issued')->index();
+            $table->string('invoice', 60)->index();
+            $table->integer('product_id');
+            $table->integer('quantity');
+            $table->integer('price');
+            $table->integer('cost');
+            $table->integer('warehouse_id');
+            $table->integer('user_id');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }
