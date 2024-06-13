@@ -48,7 +48,7 @@ export default function Authenticated({ user, header, children }) {
                 </NavLink>
                 <NavLink
                   href={route("setting")}
-                  active={route().current("setting")}
+                  active={route().current("setting", true)}
                 >
                   Setting
                 </NavLink>

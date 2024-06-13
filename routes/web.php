@@ -32,7 +32,10 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Setting/Setting');
     })->name('setting');
 
-    Route::get('/account', [ChartOfAccountController::class, 'index'])->name('account.index');
+    Route::get('/setting/account', [ChartOfAccountController::class, 'index'])->name('seeting.account.index');
+    Route::post('/setting/account', [ChartOfAccountController::class, 'store'])->name('seeting.account.store');
+    Route::put('/setting/account/{id}', [ChartOfAccountController::class, 'update'])->name('seeting.account.update');
+    Route::delete('/setting/account/{id}', [ChartOfAccountController::class, 'destroy'])->name('seeting.account.destroy');
 });
 
 require __DIR__ . '/auth.php';
