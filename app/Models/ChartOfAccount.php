@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class ChartOfAccount extends Model
 {
     use HasFactory;
+
+    protected $guarded = ['id'];
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

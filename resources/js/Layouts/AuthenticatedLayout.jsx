@@ -20,7 +20,6 @@ export default function Authenticated({ user, header, children }) {
                   <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                 </Link>
               </div>
-
               <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                 <NavLink
                   href={route("dashboard")}
@@ -28,6 +27,7 @@ export default function Authenticated({ user, header, children }) {
                 >
                   Home
                 </NavLink>
+
                 <NavLink
                   href={route("daily-report")}
                   active={route().current("daily-report")}
@@ -47,7 +47,7 @@ export default function Authenticated({ user, header, children }) {
                   Hutang x Piutang
                 </NavLink>
                 <NavLink
-                  href={route("dashboard")}
+                  href={route("setting")}
                   active={route().current("setting")}
                 >
                   Setting
@@ -147,7 +147,32 @@ export default function Authenticated({ user, header, children }) {
               href={route("dashboard")}
               active={route().current("dashboard")}
             >
-              Dashboard
+              Homepage
+            </ResponsiveNavLink>
+
+            <ResponsiveNavLink
+              href={route("daily-report")}
+              active={route().current("daily-report")}
+            >
+              Daily Report
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              href={route("dashboard")}
+              active={route().current("administrator")}
+            >
+              Administrator
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              href={route("dashboard")}
+              active={route().current("finance")}
+            >
+              Hutang x Piutang
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              href={route("setting")}
+              active={route().current("setting")}
+            >
+              Setting
             </ResponsiveNavLink>
           </div>
 

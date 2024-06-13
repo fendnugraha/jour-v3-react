@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChartOfAccountController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/journal', function () {
         return Inertia::render('Dashboard');
     })->name('daily-report');
+
+    Route::get('/setting', function () {
+        return Inertia::render('Setting/Setting');
+    })->name('setting');
+
+    Route::get('/account', [ChartOfAccountController::class, 'index'])->name('account.index');
 });
 
 require __DIR__ . '/auth.php';
