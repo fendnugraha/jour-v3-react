@@ -23,7 +23,6 @@ export default function AccountTable({
   const openModalCreateAccount = () => {
     setIsOpenCreateAccount(true);
   };
-  console.log(accountId);
 
   const openModalEditAccount = (accountId) => {
     setIsOpenEditAccount(true);
@@ -75,33 +74,39 @@ export default function AccountTable({
           {isNotify}
         </div>
       )}
-      <div className="py-12">
+      <div className="py-6">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <button
+            onClick={openModalCreateAccount}
+            className="bg-sky-900 hover:bg-sky-800 text-white font-bold py-2 px-4 rounded-lg mb-3"
+          >
+            Create Account
+          </button>
+          <Modal
+            show={isOpenCreateAccount}
+            onClose={closeModal}
+            title={"Create Account"}
+          >
+            <CreateAccount accounts={accounts} />
+          </Modal>
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-3">
-            <div className="mb-2 flex gap-3 justify-between">
-              <button
-                onClick={openModalCreateAccount}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Create Account
-              </button>
-              <Modal
-                show={isOpenCreateAccount}
-                onClose={closeModal}
-                title={"Create Account"}
-              >
-                <CreateAccount accounts={accounts} />
-              </Modal>
+            <div className="mb-2 grid grid-cols-2 gap-3">
+              <div></div>
               <form onSubmit={doSearchData}>
-                <div className="flex gap-2">
-                  <TextInput
+                <div className="flex">
+                  <input
                     type="search"
                     placeholder="Search..."
-                    className="w-full"
+                    className="w-full rounded-s-lg"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
-                  <PrimaryButton className="w-40 text-xs">Search</PrimaryButton>
+                  <button
+                    type="submit"
+                    className="w-40 bg-slate-600 text-white rounded-e-lg hover:bg-slate-500"
+                  >
+                    Search
+                  </button>
                 </div>
               </form>
             </div>
@@ -119,7 +124,7 @@ export default function AccountTable({
               <tbody>
                 {chartofaccounts.data.map((account, index) => (
                   <tr
-                    className="border-b odd:bg-white even:bg-blue-100 text-xs"
+                    className="odd:bg-white even:bg-blue-50 text-xs text-sky-950 hover:bg-slate-500 hover:text-white"
                     key={index}
                   >
                     <td className="p-3">{account.id}</td>
@@ -132,12 +137,12 @@ export default function AccountTable({
                     <td className="text-center">
                       <button
                         onClick={() => openModalEditAccount(account.id)}
-                        className="bg-yellow-300 px-2 py-1 rounded-lg"
+                        className="bg-yellow-300 px-2 py-1 rounded-lg hover:bg-yellow-200 transition ease-out"
                       >
                         Edit
                       </button>
                       <button
-                        className="bg-red-300 px-2 py-1 rounded-lg ml-2"
+                        className="bg-red-400 px-2 py-1 rounded-lg ml-2 hover:bg-red-300 text-white transition ease-out"
                         onClick={() => handleDelete(account.id)}
                       >
                         Hapus

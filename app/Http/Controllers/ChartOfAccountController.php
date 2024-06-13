@@ -15,8 +15,16 @@ class ChartOfAccountController extends Controller
     public function index(Request $request)
     {
         $this->search = $request->get('search', '');
+        $chartOfAccounts = ChartOfAccount::with('account')
+            ->where('acc_name', 'like', '%' . $this->search . '%')
+            ->orWhere('acc_code', 'like', '%' . $this->search . '%')
+            ->orWhereHas('account', function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->orderBy('acc_code', 'asc')
+            ->paginate(10);
         return Inertia::render('Setting/Account/AccountTable', [
-            'chartofaccounts' => ChartOfAccount::with('account')->where('acc_name', 'like', '%' . $this->search . '%')->orderBy('acc_code', 'asc')->paginate(10),
+            'chartofaccounts' => $chartOfAccounts,
             'accounts' => Account::all(),
         ]);
     }

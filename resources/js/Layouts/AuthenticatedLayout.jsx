@@ -23,32 +23,32 @@ export default function Authenticated({ user, header, children }) {
               <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                 <NavLink
                   href={route("dashboard")}
-                  active={route().current("dashboard")}
+                  active={route().has("journals")}
                 >
-                  Home
+                  Homepage
                 </NavLink>
 
                 <NavLink
                   href={route("daily-report")}
-                  active={route().current("daily-report")}
+                  active={route().has("reports")}
                 >
                   Daily Report
                 </NavLink>
                 <NavLink
                   href={route("dashboard")}
-                  active={route().current("administrator")}
+                  active={route().has("administrator")}
                 >
                   Administrator
                 </NavLink>
                 <NavLink
                   href={route("dashboard")}
-                  active={route().current("finance")}
+                  active={route().has("finance")}
                 >
                   Hutang x Piutang
                 </NavLink>
                 <NavLink
                   href={route("setting")}
-                  active={route().current("setting", true)}
+                  active={route().has("setting")}
                 >
                   Setting
                 </NavLink>
@@ -145,32 +145,32 @@ export default function Authenticated({ user, header, children }) {
           <div className="pt-2 pb-3 space-y-1">
             <ResponsiveNavLink
               href={route("dashboard")}
-              active={route().current("dashboard")}
+              active={route().has("journals")}
             >
               Homepage
             </ResponsiveNavLink>
 
             <ResponsiveNavLink
               href={route("daily-report")}
-              active={route().current("daily-report")}
+              active={route().has("reports")}
             >
               Daily Report
             </ResponsiveNavLink>
             <ResponsiveNavLink
               href={route("dashboard")}
-              active={route().current("administrator")}
+              active={route().has("administrator")}
             >
               Administrator
             </ResponsiveNavLink>
             <ResponsiveNavLink
               href={route("dashboard")}
-              active={route().current("finance")}
+              active={route().has("finance")}
             >
               Hutang x Piutang
             </ResponsiveNavLink>
             <ResponsiveNavLink
               href={route("setting")}
-              active={route().current("setting")}
+              active={route().has("setting")}
             >
               Setting
             </ResponsiveNavLink>

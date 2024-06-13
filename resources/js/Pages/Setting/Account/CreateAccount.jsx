@@ -1,4 +1,4 @@
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function CreateAccount({ accounts }) {
@@ -9,17 +9,27 @@ export default function CreateAccount({ accounts }) {
   });
 
   const [isNotify, setIsNotify] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const flash = usePage().props.flash;
+  const errors = usePage().props.errors;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     router.post("/setting/account", value, {
       onSuccess: () => {
         setIsNotify("Account created successfully");
+        setLoading(false);
         setValue({
           account: "",
           name: "",
           st_balance: "",
         });
+      },
+
+      onError: () => {
+        setIsNotify("Failed to create account");
+        setLoading(false);
       },
     });
   };
@@ -66,6 +76,9 @@ export default function CreateAccount({ accounts }) {
                 </option>
               ))}
             </select>
+            {errors.account && (
+              <div className="text-red-500">{errors.account}</div>
+            )}
           </div>
           <div className="mb-2">
             <label htmlFor="name" className="block">
@@ -78,6 +91,7 @@ export default function CreateAccount({ accounts }) {
               value={value.name}
               onChange={handleChange}
             />
+            {errors.name && <div className="text-red-500">{errors.name}</div>}
           </div>
           <div className="mb-2">
             <label htmlFor="st_balance" className="block">
@@ -90,14 +104,18 @@ export default function CreateAccount({ accounts }) {
               value={value.st_balance}
               onChange={handleChange}
             />
+            {errors.st_balance && (
+              <div className="text-red-500">{errors.st_balance}</div>
+            )}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2 mt-4">
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-lg"
+            className="w-full bg-blue-500 text-white p-2 rounded-lg disabled:bg-slate-400"
+            disabled={loading}
           >
-            Simpan
+            {loading ? "Loading..." : "Submit"}
           </button>
         </div>
       </form>

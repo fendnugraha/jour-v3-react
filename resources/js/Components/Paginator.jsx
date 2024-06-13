@@ -40,7 +40,7 @@ export default function Paginator({ links }) {
                 href={link.url}
                 className={
                   link.active
-                    ? "z-10 bg-gray-600 text-white text-md relative inline-flex items-center px-3 py-1 border font-medium first:rounded-l-md last:rounded-r-md"
+                    ? "z-10 bg-gray-600 text-white text-md relative inline-flex items-center px-3 py-1 border font-medium first:rounded-l-md last:rounded-r-md border-gray-600"
                     : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-3 py-1 border text-sm font-medium first:rounded-l-md last:rounded-r-md"
                 }
               >
