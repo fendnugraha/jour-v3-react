@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChartOfAccountController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,6 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/setting/account', [ChartOfAccountController::class, 'store'])->name('setting.account.store');
     Route::put('/setting/account/{id}', [ChartOfAccountController::class, 'update'])->name('setting.account.update');
     Route::delete('/setting/account/{id}', [ChartOfAccountController::class, 'destroy'])->name('setting.account.destroy');
+
+    Route::get('/setting/warehouse', [WarehouseController::class, 'index'])->name('setting.warehouse.index');
+    Route::post('/setting/warehouse', [WarehouseController::class, 'store'])->name('setting.warehouse.store');
+    Route::put('/setting/warehouse/{id}', [WarehouseController::class, 'update'])->name('setting.warehouse.update');
+    Route::delete('/setting/warehouse/{id}', [WarehouseController::class, 'destroy'])->name('setting.warehouse.destroy');
 });
 
 require __DIR__ . '/auth.php';

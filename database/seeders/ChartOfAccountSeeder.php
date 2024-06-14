@@ -14,12 +14,12 @@ class ChartOfAccountSeeder extends Seeder
     public function run(): void
     {
         $acc_coa = [
-            ['acc_code' => '10100-001', 'acc_name' => 'Kas Kecil', 'account_id' => 1, 'st_balance' => 0],
-            ['acc_code' => '10100-002', 'acc_name' => 'Kas Besar Admin (Dana Belum Disetor)', 'account_id' => 1, 'st_balance' => 0],
-            ['acc_code' => '10200-001', 'acc_name' => 'Bank BCA (Headquarter)', 'account_id' => 2, 'st_balance' => 0],
-            ['acc_code' => '10200-002', 'acc_name' => 'Bank MANDIRI (Headquarter)', 'account_id' => 2, 'st_balance' => 0],
-            ['acc_code' => '10200-003', 'acc_name' => 'Bank BRI (Headquarter)', 'account_id' => 2, 'st_balance' => 0],
-            ['acc_code' => '10200-004', 'acc_name' => 'Bank BNI (Headquarter)', 'account_id' => 2, 'st_balance' => 0],
+            ['acc_code' => '10100-001', 'acc_name' => 'Kas Kecil', 'account_id' => 1, 'st_balance' => 0, 'warehouse_id' => 1],
+            ['acc_code' => '10100-002', 'acc_name' => 'Kas Besar Admin (Dana Belum Disetor)', 'account_id' => 1, 'st_balance' => 0, 'warehouse_id' => 1],
+            ['acc_code' => '10200-001', 'acc_name' => 'Bank BCA (Headquarter)', 'account_id' => 2, 'st_balance' => 0, 'warehouse_id' => 1],
+            ['acc_code' => '10200-002', 'acc_name' => 'Bank MANDIRI (Headquarter)', 'account_id' => 2, 'st_balance' => 0, 'warehouse_id' => 1],
+            ['acc_code' => '10200-003', 'acc_name' => 'Bank BRI (Headquarter)', 'account_id' => 2, 'st_balance' => 0, 'warehouse_id' => 1],
+            ['acc_code' => '10200-004', 'acc_name' => 'Bank BNI (Headquarter)', 'account_id' => 2, 'st_balance' => 0, 'warehouse_id' => 1],
             ['acc_code' => '10400-001', 'acc_name' => 'Piutang Usaha', 'account_id' => 4, 'st_balance' => 0],
             ['acc_code' => '10400-002', 'acc_name' => 'Piutang Karyawan', 'account_id' => 4, 'st_balance' => 0],
             ['acc_code' => '10600-001', 'acc_name' => 'Persediaan Barang', 'account_id' => 6, 'st_balance' => 0],

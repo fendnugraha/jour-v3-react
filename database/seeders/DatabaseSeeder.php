@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
         Warehouse::create([
             'code' => 'HQT',
             'name' => 'HEADQUARTER',
-            'address' => 'Bandung, Jawa Barat, ID, 40375',
+            'location' => 'Bandung, Jawa Barat, ID, 40375',
             'chart_of_account_id' => 1
         ]);
 

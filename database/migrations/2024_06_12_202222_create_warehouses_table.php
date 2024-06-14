@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code', 3)->unique();
             $table->string('name', 30)->unique();
-            $table->string('address');
+            $table->string('location', 160);
             $table->foreignId('chart_of_account_id');
             $table->timestamps();
         });

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Warehouse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,11 @@ class ChartOfAccount extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function warehouse()
+    {
+        return $this->hasMany(Warehouse::class);
+    }
 
     public function scopeFilterAccount($query, array $filters)
     {
