@@ -1,7 +1,5 @@
 import Modal from "@/Components/Modal";
 import Paginator from "@/Components/Paginator";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";

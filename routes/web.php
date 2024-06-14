@@ -13,7 +13,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->middleware('isLoggedIn');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -24,9 +24,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/journal', function () {
-        return Inertia::render('Dashboard');
-    })->name('daily-report');
+    Route::get('/reports', function () {
+        return Inertia::render('Journal/DailyReport');
+    })->name('reports');
 
     Route::get('/setting', function () {
         return Inertia::render('Setting/Setting');

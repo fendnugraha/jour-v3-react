@@ -11,7 +11,7 @@ export default function Authenticated({ user, header, children }) {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white border-b border-gray-100">
+      <nav className="bg-sky-950 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
@@ -23,32 +23,32 @@ export default function Authenticated({ user, header, children }) {
               <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                 <NavLink
                   href={route("dashboard")}
-                  active={route().has("journals")}
+                  active={route().current("dashboard")}
                 >
                   Homepage
                 </NavLink>
 
                 <NavLink
-                  href={route("daily-report")}
-                  active={route().has("reports")}
+                  href={route("reports")}
+                  active={route().current("reports")}
                 >
                   Daily Report
                 </NavLink>
                 <NavLink
                   href={route("dashboard")}
-                  active={route().has("administrator")}
+                  active={route().current("administrator")}
                 >
                   Administrator
                 </NavLink>
                 <NavLink
                   href={route("dashboard")}
-                  active={route().has("finance")}
+                  active={route().current("finance")}
                 >
                   Hutang x Piutang
                 </NavLink>
                 <NavLink
                   href={route("setting")}
-                  active={route().has("setting")}
+                  active={route().current("setting*")}
                 >
                   Setting
                 </NavLink>
@@ -145,32 +145,32 @@ export default function Authenticated({ user, header, children }) {
           <div className="pt-2 pb-3 space-y-1">
             <ResponsiveNavLink
               href={route("dashboard")}
-              active={route().has("journals")}
+              active={route().current("journals")}
             >
               Homepage
             </ResponsiveNavLink>
 
             <ResponsiveNavLink
-              href={route("daily-report")}
-              active={route().has("reports")}
+              href={route("reports")}
+              active={route().current("reports")}
             >
               Daily Report
             </ResponsiveNavLink>
             <ResponsiveNavLink
               href={route("dashboard")}
-              active={route().has("administrator")}
+              active={route().current("administrator")}
             >
               Administrator
             </ResponsiveNavLink>
             <ResponsiveNavLink
               href={route("dashboard")}
-              active={route().has("finance")}
+              active={route().current("finance")}
             >
               Hutang x Piutang
             </ResponsiveNavLink>
             <ResponsiveNavLink
               href={route("setting")}
-              active={route().has("setting")}
+              active={route().current("setting")}
             >
               Setting
             </ResponsiveNavLink>

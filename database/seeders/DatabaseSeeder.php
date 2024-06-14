@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Role;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
 use Database\Seeders\AccountSeeder;
@@ -34,6 +35,12 @@ class DatabaseSeeder extends Seeder
             'name' => 'HEADQUARTER',
             'address' => 'Bandung, Jawa Barat, ID, 40375',
             'chart_of_account_id' => 1
+        ]);
+
+        Role::create([
+            'user_id' => 1,
+            'warehouse_id' => 1,
+            'role' => 'Administrator'
         ]);
     }
 }
