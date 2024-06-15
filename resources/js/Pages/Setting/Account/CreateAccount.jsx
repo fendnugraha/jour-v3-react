@@ -18,7 +18,7 @@ export default function CreateAccount({ accounts }) {
     setLoading(true);
     router.post("/setting/account", value, {
       onSuccess: () => {
-        setIsNotify("Account created successfully");
+        setIsNotify(flash.message);
         setLoading(false);
         setValue({
           account: "",

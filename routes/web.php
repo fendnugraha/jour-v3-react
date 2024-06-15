@@ -39,9 +39,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/setting/account/{id}', [ChartOfAccountController::class, 'destroy'])->name('setting.account.destroy');
 
     Route::get('/setting/warehouse', [WarehouseController::class, 'index'])->name('setting.warehouse.index');
+    Route::get('/setting/warehouse/{id}/edit', [WarehouseController::class, 'edit'])->name('setting.warehouse.edit');
     Route::post('/setting/warehouse', [WarehouseController::class, 'store'])->name('setting.warehouse.store');
     Route::put('/setting/warehouse/{id}', [WarehouseController::class, 'update'])->name('setting.warehouse.update');
     Route::delete('/setting/warehouse/{id}', [WarehouseController::class, 'destroy'])->name('setting.warehouse.destroy');
+    Route::post('/setting/warehouse/updatebanklist', [WarehouseController::class, 'updatebanklist'])->name('setting.warehouse.updatebanklist');
+
+    Route::get('/setting/user', function () {
+        return Inertia::render('Setting/User/UserIndex', [
+            'title' => 'Users',
+            'users' => \App\Models\User::with('roles')->orderBy('name')->paginate(10)->withQueryString(),
+        ]);
+    })->name('setting.user');
+    Route::get('setting/user/{id}/edit', fn () => Inertia::render('Setting/User/UserEdit'))->name('setting.user.edit');
 });
 
 require __DIR__ . '/auth.php';

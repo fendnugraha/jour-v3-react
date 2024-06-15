@@ -18,7 +18,7 @@ export default function Setting({ auth }) {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             <Link
               className="text-3xl text-slate-500 h-30 sm:h-60 flex justify-center items-center bg-white border-gray-200 shadow-md border rounded-xl hover:text-5xl hover:border-sky-950 hover:text-sky-950 transition-all duration-300 ease-out"
-              href="/setting/user"
+              href={route("setting.user")}
             >
               User
             </Link>

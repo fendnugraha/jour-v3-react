@@ -29,8 +29,8 @@ export default function CreateWarehouse({ chartofaccounts }) {
     setLoading(true);
     e.preventDefault();
     router.post("/setting/warehouse", value, {
-      onFinish: () => {
-        setIsNotify(flash.message);
+      onSuccess: () => {
+        setIsNotify("Warehouse created successfully");
         setLoading(false);
         setValue({
           code: "",
@@ -40,7 +40,7 @@ export default function CreateWarehouse({ chartofaccounts }) {
         });
       },
       onError: () => {
-        setIsNotify(flash.error);
+        setIsNotify("Failed to create warehouse");
         setLoading(false);
       },
     });
