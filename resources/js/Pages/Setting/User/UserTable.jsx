@@ -1,4 +1,4 @@
-import { EyeIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Link, router } from "@inertiajs/react";
 import { useState } from "react";
 
@@ -7,6 +7,16 @@ export default function UserTable({ users }) {
   const doSearchData = (e) => {
     e.preventDefault();
     router.get("/setting/user", { search }, { preserveState: true });
+  };
+
+  const deleteUser = (id) => {
+    if (confirm("Are you sure you want to delete this user?")) {
+      router.delete(`/setting/user/${id}`, {
+        onSuccess: () => {
+          setIsNotify("User deleted successfully");
+        },
+      });
+    }
   };
   return (
     <>
@@ -36,6 +46,7 @@ export default function UserTable({ users }) {
             <th className="p-4">No</th>
             <th className="p-4">Name</th>
             <th className="p-4">Email</th>
+            <th className="p-4">Created At</th>
             <th className="p-4">Action</th>
           </tr>
         </thead>
@@ -45,16 +56,25 @@ export default function UserTable({ users }) {
               key={user.id}
               className="odd:bg-white even:bg-blue-50 text-xs text-sky-950 hover:bg-slate-500 hover:text-white"
             >
-              <td className="p-3">{index + 1}</td>
+              <td className="p-2">{index + 1}</td>
               <td className="">{user.name}</td>
               <td className="">{user.email}</td>
+              <td className="">
+                {new Date(user.created_at).toLocaleString("id-ID")}
+              </td>
               <td className="p-3 flex gap-2 items-center justify-center">
                 <Link
                   href={route("setting.user.edit", user.id)}
-                  className="bg-sky-500 hover:bg-sky-400 text-white font-bold py-1 px-2 rounded-md"
+                  className="bg-yellow-300 hover:bg-yellow-200 text-slate-800 font-bold py-1 px-2 rounded-md"
                 >
                   <EyeIcon className="size-5" />
                 </Link>
+                <button
+                  className="bg-red-500 hover:bg-red-400 text-white font-bold py-1 px-2 rounded-md"
+                  onClick={() => deleteUser(user.id)}
+                >
+                  <TrashIcon className="size-5" />
+                </button>
               </td>
             </tr>
           ))}

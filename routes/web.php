@@ -1,11 +1,16 @@
 <?php
 
-use App\Http\Controllers\ChartOfAccountController;
+use App\Models\User;
+use Inertia\Inertia;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WarehouseController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\ChartOfAccountController;
+use App\Models\Role;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -48,10 +53,55 @@ Route::middleware('auth')->group(function () {
     Route::get('/setting/user', function () {
         return Inertia::render('Setting/User/UserIndex', [
             'title' => 'Users',
-            'users' => \App\Models\User::with('roles')->orderBy('name')->paginate(10)->withQueryString(),
+            'users' => \App\Models\User::orderBy('name')->paginate(10)->withQueryString(),
         ]);
     })->name('setting.user');
-    Route::get('setting/user/{id}/edit', fn () => Inertia::render('Setting/User/UserEdit'))->name('setting.user.edit');
+    Route::get('setting/user/{id}/edit', fn () => Inertia::render('Setting/User/EditUser', [
+        'user' => User::with('roles')->where('id', request('id'))->first(),
+        'warehouses' => \App\Models\Warehouse::orderBy('name')->paginate(10)->withQueryString(),
+    ]))->name('setting.user.edit');
+    Route::post('setting/user', function (Request $request) {
+        // Request validation rules
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        // Creating or updating the user
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Assigning roles to the user
+        Role::create([
+            'user_id' => $user->id,
+            'warehouse_id' => 1,
+            'role' => 'Kasir'
+        ]);
+
+        // Redirecting back to the setting user route
+        return redirect()->route('setting.user');
+    })->name('setting.user.store');
+
+    Route::post('/update-user-role', function (Request $request) {
+        $checkUserRole = Role::where('user_id', $request->userId);
+        $role = $request->role ?? $checkUserRole->role;
+        $userId = $request->userId ?? $checkUserRole->user_id;
+        $warehouseId = $request->warehouseId ?? $checkUserRole->warehouse_id;
+
+        Role::where('user_id', $userId)->update([
+            'warehouse_id' => $warehouseId,
+            'role' => $role
+        ]);
+
+        return redirect()->back();
+    })->name('update-user-role');
+
+    Route::put('setting/user/{id}', fn () => Inertia::render('Setting/User/UserEdit'))->name('setting.user.update');
+    Route::delete('setting/user/{id}', fn () => Inertia::render('Setting/User/UserEdit'))->name('setting.user.destroy');
 });
 
 require __DIR__ . '/auth.php';
