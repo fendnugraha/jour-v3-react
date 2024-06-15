@@ -9,6 +9,8 @@ export default function Authenticated({ user, header, children }) {
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
 
+  const canAccess = user.roles.role === "Administrator";
+  console.log(canAccess);
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-sky-950 border-b border-gray-100">
@@ -34,24 +36,29 @@ export default function Authenticated({ user, header, children }) {
                 >
                   Daily Report
                 </NavLink>
-                <NavLink
-                  href={route("dashboard")}
-                  active={route().current("administrator")}
-                >
-                  Administrator
-                </NavLink>
-                <NavLink
-                  href={route("dashboard")}
-                  active={route().current("finance")}
-                >
-                  Hutang x Piutang
-                </NavLink>
-                <NavLink
-                  href={route("setting")}
-                  active={route().current("setting*")}
-                >
-                  Setting
-                </NavLink>
+                {canAccess && (
+                  <>
+                    <NavLink
+                      href={route("dashboard")}
+                      active={route().current("administrator")}
+                    >
+                      Administrator
+                    </NavLink>
+
+                    <NavLink
+                      href={route("dashboard")}
+                      active={route().current("finance")}
+                    >
+                      Hutang x Piutang
+                    </NavLink>
+                    <NavLink
+                      href={route("setting")}
+                      active={route().current("setting*")}
+                    >
+                      Setting
+                    </NavLink>
+                  </>
+                )}
               </div>
             </div>
 
