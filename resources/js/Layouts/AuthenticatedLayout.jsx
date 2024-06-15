@@ -10,7 +10,6 @@ export default function Authenticated({ user, header, children }) {
     useState(false);
 
   const canAccess = user.roles.role === "Administrator";
-  console.log(canAccess);
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-sky-950 border-b border-gray-100">

@@ -36,13 +36,13 @@ export default function Setting({ auth }) {
             </Link>
             <Link
               className="text-3xl text-slate-500 h-30 sm:h-60 flex justify-center items-center bg-white border-gray-200 shadow-md border rounded-xl hover:text-5xl hover:border-sky-950 hover:text-sky-950 transition-all duration-300 ease-out"
-              href="/setting/contact"
+              href={route("setting.contact")}
             >
               Contact
             </Link>
             <Link
               className="text-3xl text-slate-500 h-30 sm:h-60 flex justify-center items-center bg-white border-gray-200 shadow-md border rounded-xl hover:text-5xl hover:border-sky-950 hover:text-sky-950 transition-all duration-300 ease-out"
-              href="/setting/product"
+              href={route("setting.product")}
             >
               Product
             </Link>

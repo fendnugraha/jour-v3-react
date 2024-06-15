@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Role;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -7,10 +8,11 @@ use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\ChartOfAccountController;
-use App\Models\Role;
+use App\Http\Controllers\ContactController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -102,6 +104,9 @@ Route::middleware('auth')->group(function () {
 
     Route::put('setting/user/{id}', fn () => Inertia::render('Setting/User/UserEdit'))->name('setting.user.update');
     Route::delete('setting/user/{id}', fn () => Inertia::render('Setting/User/UserEdit'))->name('setting.user.destroy');
+
+    Route::get('/setting/product', [ProductController::class, 'index'])->name('setting.product');
+    Route::get('/setting/caontact', [ContactController::class, 'index'])->name('setting.contact');
 });
 
 require __DIR__ . '/auth.php';

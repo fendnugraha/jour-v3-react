@@ -3,8 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ContactController extends Controller
 {
-    //
+    public function index()
+    {
+        return Inertia::render('Setting/Contact/ContactIndex', [
+            'title' => 'Contact',
+            'contacts' => \App\Models\Contact::all()
+        ]);
+    }
 }
