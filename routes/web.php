@@ -3,16 +3,19 @@
 use App\Models\Role;
 use App\Models\User;
 use Inertia\Inertia;
+use App\Models\Journal;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\JournalController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\ChartOfAccountController;
-use App\Http\Controllers\ContactController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -23,9 +26,7 @@ Route::get('/', function () {
     ]);
 })->middleware('isLoggedIn');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [JournalController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -60,7 +61,7 @@ Route::middleware('auth')->group(function () {
     })->name('setting.user');
     Route::get('setting/user/{id}/edit', fn () => Inertia::render('Setting/User/EditUser', [
         'user' => User::with('roles')->where('id', request('id'))->first(),
-        'warehouses' => \App\Models\Warehouse::orderBy('name')->paginate(10)->withQueryString(),
+        'warehouses' => \App\Models\Warehouse::all(),
     ]))->name('setting.user.edit');
     Route::post('setting/user', function (Request $request) {
         // Request validation rules
@@ -103,10 +104,43 @@ Route::middleware('auth')->group(function () {
     })->name('update-user-role');
 
     Route::put('setting/user/{id}', fn () => Inertia::render('Setting/User/UserEdit'))->name('setting.user.update');
-    Route::delete('setting/user/{id}', fn () => Inertia::render('Setting/User/UserEdit'))->name('setting.user.destroy');
+    Route::delete(
+        'setting/user/{id}',
+        function () {
+            $user = User::find(request('id'));
+            if ($user->id == Auth::user()->id) {
+                return redirect()->back()->with('error', 'User cannot be deleted because it is currently logged in');
+            }
+
+            if ($user->id == 1) {
+                return redirect()->back()->with('error', 'User cannot be deleted because it is default user');
+            }
+
+            // Check if user has journal entries
+            $journalExists = Journal::where('user_id', request('id'))->exists();
+            if ($journalExists) {
+                return redirect()->back()->with('error', 'User cannot be deleted because it has journal entries');
+            } else {
+                $user->delete();
+                Role::where('user_id', request('id'))->delete();
+            }
+            return redirect()->route('setting.user');
+        }
+    )->name('setting.user.destroy');
 
     Route::get('/setting/product', [ProductController::class, 'index'])->name('setting.product');
-    Route::get('/setting/caontact', [ContactController::class, 'index'])->name('setting.contact');
+    Route::get('/setting/product/{id}/edit', [ProductController::class, 'edit'])->name('setting.product.edit');
+    Route::post('/setting/product', [ProductController::class, 'store'])->name('setting.product.store');
+    Route::put('/setting/product/{id}', [ProductController::class, 'update'])->name('setting.product.update');
+    Route::delete('/setting/product/{id}', [ProductController::class, 'destroy'])->name('setting.product.destroy');
+
+    Route::get('/setting/contact', [ContactController::class, 'index'])->name('setting.contact');
+    Route::get('/setting/contact/{id}/edit', [ContactController::class, 'edit'])->name('setting.contact.edit');
+    Route::post('/setting/contact', [ContactController::class, 'store'])->name('setting.contact.store');
+    Route::put('/setting/contact/{id}', [ContactController::class, 'update'])->name('setting.contact.update');
+    Route::delete('/setting/contact/{id}', [ContactController::class, 'destroy'])->name('setting.contact.destroy');
+
+    Route::post('journal', [JournalController::class, 'transfer'])->name('journal.transfer.store');
 });
 
 require __DIR__ . '/auth.php';

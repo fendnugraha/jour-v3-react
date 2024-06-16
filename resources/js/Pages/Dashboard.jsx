@@ -2,8 +2,10 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useState } from "react";
 import Modal from "@/Components/Modal";
+import CreateTransfer from "./Journal/CreateTransfer";
+import JournalTable from "./Journal/JournalTable";
 
-export default function Dashboard({ auth }) {
+export default function Dashboard({ auth, title, charts }) {
   let [isOpenCreateTransfer, setIsOpenCreateTransfer] = useState(false);
 
   function closeModal() {
@@ -19,7 +21,7 @@ export default function Dashboard({ auth }) {
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-          Dashboard
+          {title}
         </h2>
       }
     >
@@ -38,8 +40,9 @@ export default function Dashboard({ auth }) {
             onClose={closeModal}
             title={"Create Transfer"}
           >
-            {/* <CreateTransfer /> */}
+            <CreateTransfer charts={charts} />
           </Modal>
+          <JournalTable />
         </div>
       </div>
     </AuthenticatedLayout>

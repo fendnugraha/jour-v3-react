@@ -58,7 +58,7 @@ export default function Modal({
             <div className="w-full py-4 px-6 border-b">
               <div className="flex justify-between ">
                 <h1 className="font-bold">{title}</h1>
-                <button onClick={close} className="hover:rotate-90 transition">
+                <button onClick={close} className="hover:rotate-180 transition">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

@@ -1,29 +1,22 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export default function EditProduct({ auth, product }) {
+export default function EditContact({ auth, contact }) {
   const { data, setData, put, processing, errors, reset } = useForm({
-    name: product.name,
-    cost: product.cost,
-    price: product.price,
+    name: contact.name,
+    type: contact.type,
+    description: contact.description,
   });
+
   const [isNotify, setIsNotify] = useState(false);
-  useEffect(() => {
-    if (isNotify) {
-      setTimeout(() => {
-        setIsNotify(false);
-      }, 3000);
-    }
-  }, [isNotify]);
 
   const submit = (e) => {
     e.preventDefault();
-    put(route("setting.product.update", product.id), {
+    put(route("setting.contact.update", contact.id), {
       onSuccess: () => {
-        setIsNotify("Product updated successfully");
+        setIsNotify("Contact updated successfully");
       },
-
       onError: () => {
         setIsNotify("Something went wrong");
       },
@@ -36,7 +29,7 @@ export default function EditProduct({ auth, product }) {
         header={
           <h2 className="font-semibold text-xl text-gray-800 leading-tight">
             Setting - Edit Contact{" "}
-            <span className="text-orange-500">{product.name}</span>
+            <span className="text-orange-500">{contact.name}</span>
           </h2>
         }
       >
@@ -45,7 +38,7 @@ export default function EditProduct({ auth, product }) {
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <Link
               as="button"
-              href={route("setting.product")}
+              href={route("setting.contact")}
               className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-md mb-3"
             >
               Kembali
@@ -68,56 +61,51 @@ export default function EditProduct({ auth, product }) {
                   />
                   <p className="text-red-500">{errors.name}</p>
                 </div>
+
                 <div className="mb-6">
                   <label
-                    htmlFor="cost"
+                    htmlFor="type"
                     className="block mb-2 text-sm font-medium text-gray-900"
                   >
-                    Cost
+                    Type
                   </label>
-                  <input
-                    type="text"
-                    name="cost"
-                    value={data.cost}
-                    onChange={(e) => setData("cost", e.target.value)}
+                  <select
+                    name="type"
+                    value={data.type}
+                    onChange={(e) => setData("type", e.target.value)}
                     className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                  />
-                  <p className="text-red-500">{errors.cost}</p>
+                  >
+                    <option value="Customer">Customer</option>
+                    <option value="Supplier">Supplier</option>
+                  </select>
+                  <p className="text-red-500">{errors.type}</p>
                 </div>
+
                 <div className="mb-6">
                   <label
-                    htmlFor="price"
+                    htmlFor="description"
                     className="block mb-2 text-sm font-medium text-gray-900"
                   >
-                    Price
+                    Description
                   </label>
-                  <input
-                    type="text"
-                    name="price"
-                    value={data.price}
-                    onChange={(e) => setData("price", e.target.value)}
+                  <textarea
+                    name="description"
+                    value={data.description}
+                    onChange={(e) => setData("description", e.target.value)}
                     className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                   />
-                  <p className="text-red-500">{errors.price}</p>
+                  <p className="text-red-500">{errors.description}</p>
                 </div>
 
                 <button
                   type="submit"
-                  className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                  disabled={processing}
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md disabled:bg-slate-500 disabled:cursor-not-allowed"
                 >
                   {processing ? "Processing..." : "Update"}
                 </button>
               </form>
             </div>
-            {isNotify && (
-              <div
-                className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-                role="alert"
-              >
-                <strong className="font-bold">Success!</strong>
-                <span className="block sm:inline">{isNotify}</span>
-              </div>
-            )}
           </div>
         </div>
       </AuthenticatedLayout>
