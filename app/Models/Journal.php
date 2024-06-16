@@ -12,6 +12,54 @@ class Journal extends Model
 
     protected $guarded = ['id'];
 
+    public function scopeFilterJournals($query, array $filters)
+    {
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('invoice', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('cred_code', 'like', '%' . $search . '%')
+                    ->orWhere('debt_code', 'like', '%' . $search . '%')
+                    ->orWhere('date_issued', 'like', '%' . $search . '%')
+                    ->orWhere('trx_type', 'like', '%' . $search . '%')
+                    ->orWhere('status', 'like', '%' . $search . '%')
+                    ->orWhere('amount', 'like', '%' . $search . '%')
+                    ->orWhere('fee_amount', 'like', '%' . $search . '%')
+                    ->orWhereHas('debt', function ($query) use ($search) {
+                        $query->where('acc_name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('cred', function ($query) use ($search) {
+                        $query->where('acc_name', 'like', '%' . $search . '%');
+                    });
+            });
+        });
+    }
+
+    public function debt()
+    {
+        return $this->belongsTo(ChartOfAccount::class, 'debt_code', 'acc_code');
+    }
+
+    public function cred()
+    {
+        return $this->belongsTo(ChartOfAccount::class, 'cred_code', 'acc_code');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'invoice', 'invoice');
+    }
+
     public function invoice_journal()
     {
         $lastInvoice = DB::table('journals')

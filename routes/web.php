@@ -140,7 +140,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/setting/contact/{id}', [ContactController::class, 'update'])->name('setting.contact.update');
     Route::delete('/setting/contact/{id}', [ContactController::class, 'destroy'])->name('setting.contact.destroy');
 
-    Route::post('journal', [JournalController::class, 'transfer'])->name('journal.transfer.store');
+    Route::post('journal/transfer', [JournalController::class, 'transfer'])->name('journal.transfer.store');
+    Route::post('journal/cash-withdrawal', [JournalController::class, 'cashWithdrawal'])->name('journal.cash-withdrawal.store');
 });
 
 require __DIR__ . '/auth.php';

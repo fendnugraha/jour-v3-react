@@ -15,7 +15,7 @@ class ChartOfAccountController extends Controller
     public function index(Request $request)
     {
         $chartOfAccounts = ChartOfAccount::with('account')
-            ->filterAccount(request(['search']))
+            ->filterAccount(request()->only(['search']))
             ->orderBy('acc_code', 'asc')
             ->paginate(10)->withQueryString();
         return Inertia::render('Setting/Account/AccountTable', [

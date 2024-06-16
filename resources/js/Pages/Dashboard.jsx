@@ -4,18 +4,27 @@ import { useState } from "react";
 import Modal from "@/Components/Modal";
 import CreateTransfer from "./Journal/CreateTransfer";
 import JournalTable from "./Journal/JournalTable";
+import CreateCashWithdrawal from "./Journal/CreateCashWithdrawal";
+import Dropdown from "@/Components/Dropdown";
 
-export default function Dashboard({ auth, title, charts }) {
+export default function Dashboard({ auth, title, charts, journals }) {
   let [isOpenCreateTransfer, setIsOpenCreateTransfer] = useState(false);
+  let [isOpenCreateCashWithdrawal, setIsOpenCreateCashWithdrawal] =
+    useState(false);
 
   function closeModal() {
     setIsOpenCreateTransfer(false);
-    setIsOpenCreateTransfer(false);
+    setIsOpenCreateCashWithdrawal(false);
   }
 
   function openModalCreateTransfer() {
     setIsOpenCreateTransfer(true);
   }
+
+  function openModalCreateCashWithdrawal() {
+    setIsOpenCreateCashWithdrawal(true);
+  }
+
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -27,13 +36,13 @@ export default function Dashboard({ auth, title, charts }) {
     >
       <Head title="Dashboard" />
 
-      <div className="py-12">
+      <div className="py-6">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <button
             onClick={openModalCreateTransfer}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="w-full sm:w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 mr-2"
           >
-            Create Transfer
+            Transfer Uang
           </button>
           <Modal
             show={isOpenCreateTransfer}
@@ -42,7 +51,33 @@ export default function Dashboard({ auth, title, charts }) {
           >
             <CreateTransfer charts={charts} />
           </Modal>
-          <JournalTable />
+          <button
+            onClick={openModalCreateCashWithdrawal}
+            className="w-full sm:w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 mr-2"
+          >
+            Tarik Tunai
+          </button>
+          <Modal
+            show={isOpenCreateCashWithdrawal}
+            onClose={closeModal}
+            title={"Create CashWithdrawal"}
+          >
+            <CreateCashWithdrawal charts={charts} />
+          </Modal>
+          <button
+            onClick={openModalCreateCashWithdrawal}
+            className="w-full sm:min-w-40 sm:max-w-fit bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 mr-2"
+          >
+            Voucher & Deposit
+          </button>
+          <button
+            onClick={openModalCreateCashWithdrawal}
+            className="w-full sm:min-w-40 sm:max-w-fit bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4 mr-2"
+          >
+            Kas Keluar
+          </button>
+
+          <JournalTable journals={journals} />
         </div>
       </div>
     </AuthenticatedLayout>
