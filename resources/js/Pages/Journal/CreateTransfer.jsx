@@ -2,15 +2,23 @@ import { useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function CreateTransfer({ charts }) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed, so we add 1
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+
   const { data, setData, post, processing, errors, reset } = useForm({
-    date_issued: new Date().toISOString().slice(0, 16),
+    date_issued: formattedDate,
     cred_code: "",
     amount: "",
     fee_amount: "",
     custName: "",
     description: "",
   });
-
   const [isNotify, setIsNotify] = useState(false);
 
   const submit = (e) => {
@@ -54,7 +62,7 @@ export default function CreateTransfer({ charts }) {
               type="datetime-local"
               id="date_issued"
               name="date_issued"
-              value={new Date().toISOString().slice(0, 16)}
+              value={data.date_issued}
               onChange={(e) => setData("date_issued", e.target.value)}
               className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
             />
@@ -89,7 +97,7 @@ export default function CreateTransfer({ charts }) {
           <label htmlFor="amount" className="block ">
             Jumlah
           </label>
-          <div className="col-span-2">
+          <div className="col-span-1">
             <input
               type="number"
               id="amount"
@@ -101,12 +109,15 @@ export default function CreateTransfer({ charts }) {
             />
             <small className="text-red-500">{errors.amount}</small>
           </div>
+          <h1 className="text-lg font-bold text-red-500">
+            Rp {new Intl.NumberFormat().format(data.amount)}
+          </h1>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 mb-2 items-center">
           <label htmlFor="fee_amount" className="block ">
             Biaya Admin
           </label>
-          <div className="col-span-2">
+          <div className="col-span-1">
             <input
               type="number"
               id="fee_amount"
@@ -118,6 +129,9 @@ export default function CreateTransfer({ charts }) {
             />
             <small className="text-red-500">{errors.fee_amount}</small>
           </div>
+          <h1 className="text-lg font-bold text-red-500">
+            Rp {new Intl.NumberFormat().format(data.fee_amount)}
+          </h1>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 mb-2 items-center">
           <label htmlFor="custName" className="block ">
@@ -156,9 +170,10 @@ export default function CreateTransfer({ charts }) {
 
         <button
           type="submit"
+          disabled={processing}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:bg-slate-400"
         >
-          {processing ? "Loading..." : "Submit"}
+          {processing ? "Loading..." : "Simpan"}
         </button>
       </form>
     </>

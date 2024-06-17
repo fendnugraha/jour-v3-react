@@ -2,8 +2,17 @@ import { useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function CreateCashWithdrawal({ charts }) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed, so we add 1
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+
   const { data, setData, post, processing, errors, reset } = useForm({
-    date_issued: new Date().toISOString().slice(0, 16),
+    date_issued: formattedDate,
     debt_code: "",
     amount: "",
     fee_amount: "",
@@ -139,9 +148,10 @@ export default function CreateCashWithdrawal({ charts }) {
 
         <button
           type="submit"
+          disabled={processing}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:bg-slate-400"
         >
-          {processing ? "Loading..." : "Submit"}
+          {processing ? "Loading..." : "Simpan"}
         </button>
       </form>
       {isNotify && (

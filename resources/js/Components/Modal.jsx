@@ -53,7 +53,7 @@ export default function Modal({
           leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         >
           <Dialog.Panel
-            className={`mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all w-full sm:mx-auto ${maxWidthClass}`}
+            className={`mb-6 bg-blue-100 rounded-lg overflow-hidden shadow-xl transform transition-all w-full sm:mx-auto ${maxWidthClass}`}
           >
             <div className="w-full py-4 px-6 border-b">
               <div className="flex justify-between ">

@@ -14,6 +14,16 @@ class ChartOfAccount extends Model
 
     protected $guarded = ['id'];
 
+    public function debt()
+    {
+        return $this->hasMany(Journal::class, 'debt_code', 'acc_code');
+    }
+
+    public function cred()
+    {
+        return $this->hasMany(Journal::class, 'cred_code', 'acc_code');
+    }
+
     public function warehouse()
     {
         return $this->hasMany(Warehouse::class);
