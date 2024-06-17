@@ -18,6 +18,6 @@ class Role extends Model
 
     public function warehouse()
     {
-        return $this->belongsToMany(Warehouse::class);
+        return $this->belongsTo(Warehouse::class);
     }
 }

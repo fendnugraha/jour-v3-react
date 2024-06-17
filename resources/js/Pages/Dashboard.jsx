@@ -21,6 +21,7 @@ export default function Dashboard({
   expenses,
   hq,
   cash,
+  warehouses,
 }) {
   let [isOpenCreateTransfer, setIsOpenCreateTransfer] = useState(false);
   let [isOpenCreateCashWithdrawal, setIsOpenCreateCashWithdrawal] =
@@ -39,7 +40,6 @@ export default function Dashboard({
     setIsOpenCreateExpense(false);
     setIsOpenCreateAdminFee(false);
   }
-
   function openModalCreateTransfer() {
     setIsOpenCreateTransfer(true);
   }
@@ -81,11 +81,11 @@ export default function Dashboard({
 
       <div className="py-6">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="flex flex-wrap">
+          <div className="flex sm:flex-wrap flex-col sm:flex-row">
             <div>
               <button
                 onClick={openModalCreateTransfer}
-                className="w-full sm:w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 mr-2"
+                className="w-full sm:w-40 bg-blue-500 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded mb-4 mr-2"
               >
                 Transfer Uang
               </button>
@@ -100,7 +100,7 @@ export default function Dashboard({
             <div>
               <button
                 onClick={openModalCreateCashWithdrawal}
-                className="w-full sm:w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 mr-2"
+                className="w-full sm:w-40 bg-blue-500 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded mb-4 mr-2"
               >
                 Tarik Tunai
               </button>
@@ -114,7 +114,7 @@ export default function Dashboard({
             </div>
             <Dropdown>
               <Dropdown.Trigger>
-                <button className="w-full sm:min-w-40 sm:max-w-fit bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 mr-2">
+                <button className="w-full sm:min-w-40 sm:max-w-fit bg-green-500 hover:bg-green-700 text-white text-sm py-2 px-4 rounded mb-4 mr-2">
                   Voucher & Deposit
                 </button>
               </Dropdown.Trigger>
@@ -131,7 +131,7 @@ export default function Dashboard({
             </Dropdown>
             <Dropdown>
               <Dropdown.Trigger>
-                <button className="w-full sm:min-w-40 sm:max-w-fit bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4 mr-2">
+                <button className="w-full sm:min-w-40 sm:max-w-fit bg-red-500 hover:bg-red-700 text-white text-sm py-2 px-4 rounded mb-4 mr-2">
                   Kas Keluar
                 </button>
               </Dropdown.Trigger>
@@ -184,7 +184,11 @@ export default function Dashboard({
               <CreateAdminFee charts={charts} />
             </Modal>
           </div>
-          <JournalTable journals={journals} cash={cash} />
+          <JournalTable
+            journals={journals}
+            cash={cash}
+            warehouses={warehouses}
+          />
         </div>
       </div>
     </AuthenticatedLayout>

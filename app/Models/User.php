@@ -22,7 +22,7 @@ class User extends Authenticatable
         'password',
     ];
 
-    protected $with = ['roles'];
+    protected $with = ['roles.warehouse'];
 
     /**
      * The attributes that should be hidden for serialization.

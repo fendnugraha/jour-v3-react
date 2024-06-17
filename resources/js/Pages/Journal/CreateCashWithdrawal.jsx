@@ -89,7 +89,7 @@ export default function CreateCashWithdrawal({ charts }) {
           <label htmlFor="amount" className="block ">
             Jumlah
           </label>
-          <div className="col-span-2">
+          <div className="col-span-1">
             <input
               type="number"
               id="amount"
@@ -101,12 +101,15 @@ export default function CreateCashWithdrawal({ charts }) {
             />
             <small className="text-red-500">{errors.amount}</small>
           </div>
+          <h1 className="text-xl font-bold text-blue-600">
+            Rp. {new Intl.NumberFormat().format(data.amount)}
+          </h1>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 mb-2 items-center">
           <label htmlFor="fee_amount" className="block ">
             Biaya Admin
           </label>
-          <div className="col-span-2">
+          <div className="col-span-1">
             <input
               type="number"
               id="fee_amount"
@@ -118,6 +121,9 @@ export default function CreateCashWithdrawal({ charts }) {
             />
             <small className="text-red-500">{errors.fee_amount}</small>
           </div>
+          <h1 className="text-xl font-bold text-blue-600">
+            Rp. {new Intl.NumberFormat().format(data.fee_amount)}
+          </h1>
         </div>
         <div className="mb-2">
           <label htmlFor="description" className="block">

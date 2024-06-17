@@ -19,20 +19,34 @@ class JournalController extends Controller
     public $is_taken = '';
     public $is_free;
     public $warehouse_id;
-    public $perPage = 5;
+    public $perPage;
 
     public function __construct()
     {
         $this->startDate = Carbon::now()->startOfDay();
         $this->endDate = Carbon::now()->endOfDay();
+        $this->perPage = 5;
+        $this->warehouse_id = Auth()->user()->roles->first()->warehouse_id;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $this->search = request('search');
+        $this->is_taken = request('is_taken');
+        $this->is_free = request('is_free');
+        $startDate = request('start_date') ? Carbon::parse(request('start_date'))->startOfDay() : $this->startDate;
+        $endDate = request('end_date') ? Carbon::parse(request('end_date'))->endOfDay() : $this->endDate;
+        $this->perPage = request('perPage') ? request('perPage') : $this->perPage;
+        $this->warehouse_id = request('warehouse_id') ? request('warehouse_id') : $this->warehouse_id;
+
         $journals = Journal::with(['debt', 'cred', 'sale.product'])
-            ->whereBetween('date_issued', [$this->startDate, $this->endDate])
+            ->whereBetween('date_issued', [$startDate, $endDate])
+            ->where(fn ($query) => $this->warehouse_id !== "" ? $query->where('warehouse_id', $this->warehouse_id) : $query)
+            ->where('status', 'like', '%' . $this->is_taken . '%')
+            ->where(fn ($query) => $this->is_free ? $query->where('fee_amount', 0) : $query)
+            ->filterJournals(['search' => $this->search])
             ->orderBy('id', 'desc')
-            ->paginate($this->perPage, ['*'], 'journalPage');
+            ->paginate($this->perPage, ['*'], 'journalPage')->withQueryString();
 
         return Inertia::render('Dashboard', [
             'title' => 'Journal',
@@ -43,6 +57,7 @@ class JournalController extends Controller
             'products' => \App\Models\Product::orderBy('name')->get(),
             'expenses' => ChartOfAccount::whereIn('account_id', range(33, 45))->get(),
             'hq' => ChartOfAccount::where('warehouse_id', 1)->get(),
+            'warehouses' => \App\Models\Warehouse::orderBy('name')->get(),
             'cash' => ChartOfAccount::where('warehouse_id', auth()->user()->roles->first()->warehouse_id)->first()->acc_code
         ]);
     }
