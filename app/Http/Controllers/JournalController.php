@@ -295,4 +295,52 @@ class JournalController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Journal created successfully');
     }
+
+    public function destroy($id)
+    {
+        $journal = journal::find($id);
+        try {
+            DB::beginTransaction();
+
+            $journal->delete();
+            Sale::where('invoice', $journal->invoice)->delete();
+
+            DB::commit();
+
+            return redirect()->route('dashboard')->with('success', 'Journal deleted successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function cashBalance()
+    {
+        $journal = new Journal();
+        // $startDate = Carbon::now()->startOfDay();
+        $endDate = Carbon::now()->endOfDay();
+
+        $userWarehouseId = Auth()->user()->roles->first()->warehouse_id;
+
+        $transactions = $journal->with(['debt', 'cred'])
+            ->selectRaw('debt_code, cred_code, SUM(amount) as total, warehouse_id')
+            ->whereBetween('date_issued', [Carbon::create(0000, 1, 1, 0, 0, 0)->startOfDay(), $endDate])
+            ->groupBy('debt_code', 'cred_code', 'warehouse_id')
+            ->get();
+
+        $chartOfAccounts = ChartOfAccount::with('account')->get();
+
+        foreach ($chartOfAccounts as $value) {
+            $debit = $transactions->where('debt_code', $value->acc_code)->sum('total');
+            $credit = $transactions->where('cred_code', $value->acc_code)->sum('total');
+
+            // @ts-ignore
+            $value->balance = ($value->account->status == "D") ? ($value->st_balance + $debit - $credit) : ($value->st_balance + $credit - $debit);
+        }
+
+        return Inertia::render('Journal/CashBankBalance', [
+            'accounts' => 'test',
+        ]);
+    }
 }

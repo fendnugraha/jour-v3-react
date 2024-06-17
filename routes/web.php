@@ -147,7 +147,9 @@ Route::middleware('auth')->group(function () {
     Route::post('journal/expense', [JournalController::class, 'expense'])->name('journal.expense.store');
     Route::post('journal/mutation', [JournalController::class, 'mutation'])->name('journal.mutation.store');
     Route::post('journal/admin-fee', [JournalController::class, 'adminFee'])->name('journal.admin-fee.store');
-    Route::get('/journal/{id}/edit', [ContactController::class, 'edit'])->name('journal.edit');
+    Route::get('/journal/{id}/edit', [JournalController::class, 'edit'])->name('journal.edit');
+    Route::put('/journal/{id}', [JournalController::class, 'update'])->name('journal.update');
+    Route::delete('/journal/{id}', [JournalController::class, 'destroy'])->name('journal.destroy');
 });
 
 require __DIR__ . '/auth.php';

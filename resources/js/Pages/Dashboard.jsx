@@ -11,6 +11,7 @@ import CreateDeposit from "./Journal/CreateDeposit";
 import CreateMutation from "./Journal/CreateMutation";
 import CreateExpense from "./Journal/CreateExpense";
 import CreateAdminFee from "./Journal/CreateAdminFee";
+import CashBankBalance from "./Journal/CashBankBalance";
 
 export default function Dashboard({
   auth,
@@ -189,6 +190,7 @@ export default function Dashboard({
             cash={cash}
             warehouses={warehouses}
           />
+          <CashBankBalance />
         </div>
       </div>
     </AuthenticatedLayout>
