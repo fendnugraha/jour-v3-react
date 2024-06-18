@@ -20,6 +20,7 @@ class JournalController extends Controller
     public $is_free;
     public $warehouse_id;
     public $perPage;
+    public $cash_account;
 
     public function __construct()
     {
@@ -27,38 +28,57 @@ class JournalController extends Controller
         $this->endDate = Carbon::now()->endOfDay();
         $this->perPage = 5;
         $this->warehouse_id = Auth()->user()->roles->first()->warehouse_id;
+        $this->cash_account = Auth()->user()->roles->first()->warehouse->ChartOfAccount->acc_code;
     }
 
     public function index(Request $request)
     {
+        $journal = new Journal();
+        $today = Carbon::now();
+        $userWarehouseId = Auth()->user()->roles->first()->warehouse_id;
+
         $this->search = request('search');
         $this->is_taken = request('is_taken');
         $this->is_free = request('is_free');
         $startDate = request('start_date') ? Carbon::parse(request('start_date'))->startOfDay() : $this->startDate;
         $endDate = request('end_date') ? Carbon::parse(request('end_date'))->endOfDay() : $this->endDate;
         $this->perPage = request('perPage') ? request('perPage') : $this->perPage;
-        $this->warehouse_id = request('warehouse_id') ? request('warehouse_id') : $this->warehouse_id;
+        $this->warehouse_id = request('warehouse_id') ? (request('warehouse_id') == "All" ? "All" : request('warehouse_id')) : $this->warehouse_id;
 
-        $journals = Journal::with(['debt', 'cred', 'sale.product'])
+
+        $transaction = $journal->with(['debt', 'cred', 'sale.product'])
             ->whereBetween('date_issued', [$startDate, $endDate])
-            ->where(fn ($query) => $this->warehouse_id !== "" ? $query->where('warehouse_id', $this->warehouse_id) : $query)
+            ->where(fn ($query) => $this->warehouse_id == "All" ? $query : $query->where('warehouse_id', $this->warehouse_id))
+            // ->where(fn ($query) => request('account_id') ?
+            //     $query->where('debt_code', request('account_id'))
+            //     ->orWhere('cred_code', request('account_id')) : $query)
             ->where('status', 'like', '%' . $this->is_taken . '%')
             ->where(fn ($query) => $this->is_free ? $query->where('fee_amount', 0) : $query)
             ->filterJournals(['search' => $this->search])
-            ->orderBy('id', 'desc')
-            ->paginate($this->perPage, ['*'], 'journalPage')->withQueryString();
+            ->orderBy('id', 'desc')->paginate($this->perPage, ['*'], 'journalPage')->withQueryString();
+
+        $journalTotal = $journal->whereBetween('date_issued', [$startDate, $endDate])->where(fn ($query) => request('account_id') ?
+            $query->where('debt_code', request('account_id'))
+            ->orWhere('cred_code', request('account_id')) : $query)->get();
+
+        $initBalanceDate = Carbon::parse($startDate)->subDay(1)->endOfDay();
+        $initBalance = $this->cashBalance($initBalanceDate)->where('warehouse_id', $userWarehouseId);
 
         return Inertia::render('Dashboard', [
             'title' => 'Journal',
             'charts' => ChartOfAccount::whereIn('account_id', [1, 2])
-                ->where('warehouse_id', auth()->user()->roles->first()->warehouse_id)
+                ->where('warehouse_id', $userWarehouseId)
                 ->get(),
-            'journals' => $journals,
+            'journals' => $transaction,
+            'journalsTotal' => $journalTotal,
             'products' => \App\Models\Product::orderBy('name')->get(),
             'expenses' => ChartOfAccount::whereIn('account_id', range(33, 45))->get(),
             'hq' => ChartOfAccount::where('warehouse_id', 1)->get(),
             'warehouses' => \App\Models\Warehouse::orderBy('name')->get(),
-            'cash' => ChartOfAccount::where('warehouse_id', auth()->user()->roles->first()->warehouse_id)->first()->acc_code
+            'cash' => ChartOfAccount::where('warehouse_id', $userWarehouseId)->first()->acc_code,
+            'accounts' => $this->cashBalance($today)->where('warehouse_id', $userWarehouseId),
+            'initBalance' => $initBalance,
+            'wh' => $this->warehouse_id
         ]);
     }
 
@@ -315,11 +335,11 @@ class JournalController extends Controller
         }
     }
 
-    public function cashBalance()
+    public function cashBalance($endDate)
     {
         $journal = new Journal();
         // $startDate = Carbon::now()->startOfDay();
-        $endDate = Carbon::now()->endOfDay();
+        $endDate = $endDate ?? Carbon::now()->endOfDay();
 
         $userWarehouseId = Auth()->user()->roles->first()->warehouse_id;
 
@@ -339,8 +359,50 @@ class JournalController extends Controller
             $value->balance = ($value->account->status == "D") ? ($value->st_balance + $debit - $credit) : ($value->st_balance + $credit - $debit);
         }
 
-        return Inertia::render('Journal/CashBankBalance', [
-            'accounts' => 'test',
-        ]);
+        return $chartOfAccounts;
+    }
+
+    public function mutationHistory(Request $request)
+    {
+        $journal = new Journal();
+        $startDate = Carbon::parse($this->endDate)->startOfDay();
+        $endDate = Carbon::parse($this->endDate)->endOfDay();
+
+        $chartOfAccounts = ChartOfAccount::where(fn ($query) => Auth()->user()->roles->role !== 'Administrator' ? $query->where('warehouse_id', $this->warehouse_id) : $query)->orderBy('acc_code', 'asc')->get();
+        $journal = new Journal();
+        $journals = $journal->with('debt.account', 'cred.account', 'warehouse', 'user')
+            ->whereBetween('date_issued', [$startDate, $endDate])
+            ->where(function ($query) {
+                $query->where('invoice', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%')
+                    ->orWhere('amount', 'like', '%' . $this->search . '%');
+            })
+            ->where(function ($query) use ($request) {
+                $query->where('debt_code', $request->account)
+                    ->orWhere('cred_code', $request->account);
+            })
+            ->orderBy('date_issued', 'asc')
+            ->paginate($this->perPage, ['*'], 'mutationHistory');
+
+        $total = $journal->with('debt.account', 'cred.account', 'warehouse', 'user')->where('debt_code', $request->account)
+            ->whereBetween('date_issued', [$startDate, $endDate])
+            ->orWhere('cred_code', $request->account)
+            ->WhereBetween('date_issued', [$startDate, $endDate])
+            ->orderBy('date_issued', 'asc')
+            ->get();
+
+        $initBalanceDate = Carbon::parse($startDate)->subDay(1)->endOfDay();
+
+        $debt_total = $total->where('debt_code', $request->account)->sum('amount');
+        $cred_total = $total->where('cred_code', $request->account)->sum('amount');
+
+        return [
+            'accounts' => $chartOfAccounts,
+            'journals' => $journals,
+            'initBalance' => $journal->endBalanceBetweenDate($request->account, '0000-00-00', $initBalanceDate),
+            'endBalance' => $journal->endBalanceBetweenDate($request->account, '0000-00-00', $endDate),
+            'debt_total' => $debt_total,
+            'cred_total' => $cred_total
+        ];
     }
 }

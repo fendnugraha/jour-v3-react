@@ -98,7 +98,7 @@ class Journal extends Model
         $debit = $transactions->where('debt_code', $account_code)->sum('amount');
         $credit = $transactions->where('cred_code', $account_code)->sum('amount');
 
-        if ($initBalance->Account->status == "D") {
+        if ($initBalance->account->status == "D") {
             return $initBalance->st_balance + $debit - $credit;
         } else {
             return $initBalance->st_balance + $credit - $debit;

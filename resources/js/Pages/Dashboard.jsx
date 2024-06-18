@@ -12,17 +12,22 @@ import CreateMutation from "./Journal/CreateMutation";
 import CreateExpense from "./Journal/CreateExpense";
 import CreateAdminFee from "./Journal/CreateAdminFee";
 import CashBankBalance from "./Journal/CashBankBalance";
+import MutationHistory from "./Report/MutationHistory";
 
 export default function Dashboard({
   auth,
   title,
   charts,
   journals,
+  journalsTotal,
   products,
   expenses,
   hq,
   cash,
   warehouses,
+  accounts,
+  initBalance,
+  wh,
 }) {
   let [isOpenCreateTransfer, setIsOpenCreateTransfer] = useState(false);
   let [isOpenCreateCashWithdrawal, setIsOpenCreateCashWithdrawal] =
@@ -68,7 +73,7 @@ export default function Dashboard({
   function openModalCreateAdminFee() {
     setIsOpenCreateAdminFee(true);
   }
-
+  console.log(wh);
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -185,12 +190,22 @@ export default function Dashboard({
               <CreateAdminFee charts={charts} />
             </Modal>
           </div>
-          <JournalTable
-            journals={journals}
-            cash={cash}
-            warehouses={warehouses}
-          />
-          <CashBankBalance />
+          <div className="grid grid-cols-4 gap-1">
+            <div className="col-span-3">
+              <JournalTable
+                journals={journals}
+                journalsTotal={journalsTotal}
+                cash={cash}
+                warehouses={warehouses}
+                charts={charts}
+                initBalance={initBalance}
+                wh={wh}
+              />
+            </div>
+            <div className="bg-white p-3 rounded-lg">
+              <CashBankBalance accounts={accounts} />
+            </div>
+          </div>
         </div>
       </div>
     </AuthenticatedLayout>
