@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import DailyDashboard from "../Report/DailyDashboard";
 import MutationHistory from "../Report/MutationHistory";
-export default function DailyReport({ auth, data, charts, trx }) {
+export default function DailyReport({ auth, data, charts, trx, hq }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -16,7 +16,13 @@ export default function DailyReport({ auth, data, charts, trx }) {
       <div className="py-6">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <DailyDashboard data={data} />
-          <MutationHistory data={data} charts={charts} journals={trx} />
+          <MutationHistory
+            data={data}
+            charts={charts}
+            journals={trx}
+            warehouses={data.warehouses}
+            hq={hq}
+          />
         </div>
       </div>
     </AuthenticatedLayout>

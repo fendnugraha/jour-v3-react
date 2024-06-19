@@ -443,6 +443,7 @@ class JournalController extends Controller
             'data' => $data,
             'charts' => $charts,
             'trx' => $trx->where('trx_type', 'Mutasi Kas'),
+            'hq' => ChartOfAccount::whereIn('account_id', [1, 2])->get(),
         ]);
     }
 }
