@@ -437,8 +437,12 @@ class JournalController extends Controller
             'warehouses' => Warehouse::all(),
         ];
 
+        $charts = $this->cashBalance($endDate)->where('warehouse_id', $this->warehouse_id);
+
         return Inertia::render('Journal/DailyReport', [
-            'data' => $data
+            'data' => $data,
+            'charts' => $charts,
+            'trx' => $trx->where('trx_type', 'Mutasi Kas'),
         ]);
     }
 }

@@ -2,9 +2,10 @@ import { usePage } from "@inertiajs/react";
 
 export default function CashBankBalance({ accounts }) {
   const accountArray = Object.keys(accounts).map((key) => accounts[key]);
-  const formatNumber = (num) => {
+
+  function formatNumber(num) {
     return new Number(num).toLocaleString("id-ID");
-  };
+  }
   return (
     <>
       <div className="w-full flex items-center justify-center flex-col text-white py-4  rounded-xl mb-2 bg-orange-600">
