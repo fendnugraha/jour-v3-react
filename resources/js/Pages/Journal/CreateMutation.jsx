@@ -75,10 +75,10 @@ export default function CreateMutation({ charts, hq }) {
           </label>
           <div className="col-span-2">
             <select
-              id="debt_code"
-              name="debt_code"
-              value={data.debt_code}
-              onChange={(e) => setData("debt_code", e.target.value)}
+              id="cred_code"
+              name="cred_code"
+              value={data.cred_code}
+              onChange={(e) => setData("cred_code", e.target.value)}
               className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
             >
               <option value="">--Pilih sumber dana--</option>
@@ -88,7 +88,7 @@ export default function CreateMutation({ charts, hq }) {
                 </option>
               ))}
             </select>
-            <small className="text-red-500">{errors.debt_code}</small>
+            <small className="text-red-500">{errors.cred_code}</small>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 mb-2 items-center">
@@ -97,10 +97,10 @@ export default function CreateMutation({ charts, hq }) {
           </label>
           <div className="col-span-2">
             <select
-              id="cred_code"
-              name="cred_code"
-              value={data.cred_code}
-              onChange={(e) => setData("cred_code", e.target.value)}
+              id="debt_code"
+              name="debt_code"
+              value={data.debt_code}
+              onChange={(e) => setData("debt_code", e.target.value)}
               className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
             >
               <option value="">--Pilih tujuan mutasi--</option>
@@ -110,7 +110,7 @@ export default function CreateMutation({ charts, hq }) {
                 </option>
               ))}
             </select>
-            <small className="text-red-500">{errors.cred_code}</small>
+            <small className="text-red-500">{errors.debt_code}</small>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 mb-2 items-center">

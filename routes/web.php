@@ -33,9 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/reports', function () {
-        return Inertia::render('Journal/DailyReport');
-    })->name('reports');
+    Route::get('/reports', [JournalController::class, 'dailyReport'])->name('reports');
 
     Route::get('/setting', function () {
         return Inertia::render('Setting/Setting');

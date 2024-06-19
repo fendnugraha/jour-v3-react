@@ -1,6 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-export default function DailyReport({ auth }) {
+import DailyDashboard from "../Report/DailyDashboard";
+export default function DailyReport({ auth, data }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -11,7 +12,11 @@ export default function DailyReport({ auth }) {
       }
     >
       <Head title="Setting" />
-      <h1>Daily Report</h1>
+      <div className="py-6">
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <DailyDashboard data={data} />
+        </div>
+      </div>
     </AuthenticatedLayout>
   );
 }

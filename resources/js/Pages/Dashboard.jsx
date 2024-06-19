@@ -28,6 +28,7 @@ export default function Dashboard({
   accounts,
   initBalance,
   wh,
+  wh_account,
 }) {
   let [isOpenCreateTransfer, setIsOpenCreateTransfer] = useState(false);
   let [isOpenCreateCashWithdrawal, setIsOpenCreateCashWithdrawal] =
@@ -73,7 +74,6 @@ export default function Dashboard({
   function openModalCreateAdminFee() {
     setIsOpenCreateAdminFee(true);
   }
-  console.log(wh);
   return (
     <AuthenticatedLayout
       user={auth.user}

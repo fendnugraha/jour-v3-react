@@ -7,6 +7,7 @@ use App\Models\Sale;
 use Inertia\Inertia;
 use App\Models\Journal;
 use App\Models\Product;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\ChartOfAccount;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,9 @@ class JournalController extends Controller
         $journal = new Journal();
         $today = Carbon::now();
         $userWarehouseId = Auth()->user()->roles->first()->warehouse_id;
+        $charts = ChartOfAccount::whereIn('account_id', [1, 2])
+            ->where(fn ($query) => auth()->user()->roles->role !== 'Administrator' ? $query->where('warehouse_id', $userWarehouseId) : $query)
+            ->get();
 
         $this->search = request('search');
         $this->is_taken = request('is_taken');
@@ -44,14 +48,15 @@ class JournalController extends Controller
         $endDate = request('end_date') ? Carbon::parse(request('end_date'))->endOfDay() : $this->endDate;
         $this->perPage = request('perPage') ? request('perPage') : $this->perPage;
         $this->warehouse_id = request('warehouse_id') ? (request('warehouse_id') == "All" ? "All" : request('warehouse_id')) : $this->warehouse_id;
+        $this->cash_account = request('account_id') ? (request('account_id') == "All" ? "All" : request('account_id')) : $this->cash_account;
 
 
         $transaction = $journal->with(['debt', 'cred', 'sale.product'])
             ->whereBetween('date_issued', [$startDate, $endDate])
             ->where(fn ($query) => $this->warehouse_id == "All" ? $query : $query->where('warehouse_id', $this->warehouse_id))
-            // ->where(fn ($query) => request('account_id') ?
-            //     $query->where('debt_code', request('account_id'))
-            //     ->orWhere('cred_code', request('account_id')) : $query)
+            ->where(fn ($query) => $this->cash_account == "All" ?
+                $query->where('debt_code', request('account_id'))
+                ->orWhere('cred_code', request('account_id')) : $query)
             ->where('status', 'like', '%' . $this->is_taken . '%')
             ->where(fn ($query) => $this->is_free ? $query->where('fee_amount', 0) : $query)
             ->filterJournals(['search' => $this->search])
@@ -62,13 +67,11 @@ class JournalController extends Controller
             ->orWhere('cred_code', request('account_id')) : $query)->get();
 
         $initBalanceDate = Carbon::parse($startDate)->subDay(1)->endOfDay();
-        $initBalance = $this->cashBalance($initBalanceDate)->where('warehouse_id', $userWarehouseId);
+        $initBalance = $this->cashBalance($initBalanceDate)->where(fn ($query) => auth()->user()->roles->role !== 'Administrator' ? $query->where('warehouse_id', $userWarehouseId) : $query);
 
         return Inertia::render('Dashboard', [
             'title' => 'Journal',
-            'charts' => ChartOfAccount::whereIn('account_id', [1, 2])
-                ->where('warehouse_id', $userWarehouseId)
-                ->get(),
+            'charts' => $charts,
             'journals' => $transaction,
             'journalsTotal' => $journalTotal,
             'products' => \App\Models\Product::orderBy('name')->get(),
@@ -78,7 +81,8 @@ class JournalController extends Controller
             'cash' => ChartOfAccount::where('warehouse_id', $userWarehouseId)->first()->acc_code,
             'accounts' => $this->cashBalance($today)->where('warehouse_id', $userWarehouseId),
             'initBalance' => $initBalance,
-            'wh' => $this->warehouse_id
+            'wh' => $this->warehouse_id,
+            'wh_account' => $this->cash_account
         ]);
     }
 
@@ -404,5 +408,37 @@ class JournalController extends Controller
             'debt_total' => $debt_total,
             'cred_total' => $cred_total
         ];
+    }
+
+    public function dailyReport(Request $request)
+    {
+        $journal = new Journal();
+        $startDate = Carbon::parse($this->endDate)->startOfDay();
+        $endDate = Carbon::parse($this->endDate)->endOfDay();
+
+        $trx = Journal::whereBetween('date_issued', [$startDate, $endDate])
+            ->where(fn ($query) => $this->warehouse_id == "" ?
+                $query : $query->where('warehouse_id', $this->warehouse_id))
+            ->get();
+
+        $salesCount = $trx->whereIn('trx_type', ['Transfer Uang', 'Tarik Tunai', 'Deposit', 'Voucher & SP'])->Count();
+
+        $data = [
+            'totalCash' => $this->cashBalance($endDate)->where('warehouse_id', $this->warehouse_id)->where('account_id', 1)->sum('balance'),
+            'totalBank' => $this->cashBalance($endDate)->where('warehouse_id', $this->warehouse_id)->where('account_id', 2)->sum('balance'),
+            'totalTransfer' => $trx->where('trx_type', 'Transfer Uang')->sum('amount'),
+            'totalCashWithdrawal' => $trx->where('trx_type', 'Tarik Tunai')->sum('amount'),
+            'totalCashDeposit' => $trx->where('trx_type', 'Deposit')->sum('amount'),
+            'totalVoucher' => $trx->where('trx_type', 'Voucher & SP')->sum('amount'),
+            'totalExpense' => $trx->where('trx_type', 'Pengeluaran')->sum('fee_amount'),
+            'totalFee' => $trx->where('fee_amount', '>', 0)->sum('fee_amount'),
+            'profit' => $trx->sum('fee_amount'),
+            'salesCount' => $salesCount,
+            'warehouses' => Warehouse::all(),
+        ];
+
+        return Inertia::render('Journal/DailyReport', [
+            'data' => $data
+        ]);
     }
 }
