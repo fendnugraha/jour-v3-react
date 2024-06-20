@@ -1,6 +1,7 @@
 import Modal from "@/Components/Modal";
 import { useEffect, useState } from "react";
 import CreateBankTransfer from "./CreateBankTransfer";
+import Paginator from "@/Components/Paginator";
 
 export default function MutationHistory({
   data,
@@ -8,6 +9,7 @@ export default function MutationHistory({
   journals,
   hq,
   warehouses,
+  mutation,
 }) {
   const chartsArr = Object.values(charts);
   const journalsArr = Object.values(journals);
@@ -63,6 +65,7 @@ export default function MutationHistory({
     });
     return sum;
   };
+  console.log(mutation);
   return (
     <>
       <div className="my-5 bg-white p-3 rounded-lg">
@@ -139,31 +142,32 @@ export default function MutationHistory({
             </tr>
           </thead>
           <tbody>
-            {journalsArr.map((journal) => (
+            {mutation.data.map((mt) => (
               <tr
-                key={journal.id}
+                key={mt.id}
                 className="border-b border-slate-100 odd:bg-white even:bg-blue-50"
               >
-                <td className="text-center p-2">{journal.date_issued}</td>
+                <td className="text-center p-2">{mt.date_issued}</td>
                 <td className="p-2">
                   <span className="font-bold text-slate-700">
-                    {journal.invoice}
+                    {mt.invoice}
                     <br />
-                    {journal.cred.acc_name + " --> " + journal.debt.acc_name}
+                    {mt.cred.acc_name + " --> " + mt.debt.acc_name}
                   </span>
                 </td>
                 <td className="text-right p-3">
-                  {accountsCode.includes(journal.debt_code) &&
-                    formatNumber(journal.amount)}
+                  {accountsCode.includes(mt.debt_code) &&
+                    formatNumber(mt.amount)}
                 </td>
                 <td className="text-right p-3">
-                  {accountsCode.includes(journal.cred_code) &&
-                    formatNumber(journal.amount)}
+                  {accountsCode.includes(mt.cred_code) &&
+                    formatNumber(mt.amount)}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <Paginator links={mutation} />
       </div>
     </>
   );

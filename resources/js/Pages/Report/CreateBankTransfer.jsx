@@ -18,6 +18,7 @@ export default function CreateBankTransfer({ charts, hq, warehouses }) {
     cred_code: "",
     amount: "",
     description: "",
+    warehouse_id: "",
   });
 
   const [isNotify, setIsNotify] = useState(false);

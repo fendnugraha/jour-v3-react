@@ -416,10 +416,16 @@ class JournalController extends Controller
         $startDate = Carbon::parse($this->endDate)->startOfDay();
         $endDate = Carbon::parse($this->endDate)->endOfDay();
 
-        $trx = Journal::with(['debt', 'cred'])->whereBetween('date_issued', [$startDate, $endDate])
+        $trx = $journal->with(['debt', 'cred'])->whereBetween('date_issued', [$startDate, $endDate])
             ->where(fn ($query) => $this->warehouse_id == "" ?
                 $query : $query->where('warehouse_id', $this->warehouse_id))
             ->get();
+
+        $mutation = $journal->with(['debt', 'cred'])->whereBetween('date_issued', [$startDate, $endDate])
+            ->where(fn ($query) => $this->warehouse_id == "" ?
+                $query : $query->where('warehouse_id', $this->warehouse_id))
+            ->where('trx_type', 'Mutasi Kas')
+            ->paginate(5, ['*'], 'mutation')->withQueryString();
 
         $sales = Sale::with('product')
             ->whereBetween('date_issued', [$startDate, $endDate])
@@ -431,7 +437,22 @@ class JournalController extends Controller
             ->whereHas('product', function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
             })
-            ->paginate(5, ['*'], 'sales');
+            ->paginate(5, ['*'], 'sales')->withQueryString();
+
+        $salesGroup = Sale::with('product')->selectRaw('product_id, SUM(quantity) as quantity, SUM(quantity*cost) as total_cost, SUM(quantity*price) as total_price')
+            ->where(function ($query) use ($startDate, $endDate) {
+                if ($this->warehouse_id > 1) {
+                    $query->where('warehouse_id', $this->warehouse_id)
+                        ->whereBetween('date_issued', [$startDate, $endDate]);
+                } else {
+                    $query->whereBetween('date_issued', [$startDate, $endDate]);
+                }
+            })
+            ->whereHas('product', function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->groupBy('product_id')
+            ->paginate($this->perPage, ['*'], 'salesGroup')->withQueryString();
 
         $salesCount = $trx->whereIn('trx_type', ['Transfer Uang', 'Tarik Tunai', 'Deposit', 'Voucher & SP'])->Count();
 
@@ -455,7 +476,9 @@ class JournalController extends Controller
             'data' => $data,
             'charts' => $charts,
             'trx' => $trx->where('trx_type', 'Mutasi Kas'),
+            'mutation' => $mutation,
             'hq' => ChartOfAccount::whereIn('account_id', [1, 2])->get(),
+            'salesGroup' => $salesGroup,
             'sales' => $sales
         ]);
     }

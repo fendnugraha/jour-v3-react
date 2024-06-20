@@ -3,7 +3,17 @@ import { Head, Link, router } from "@inertiajs/react";
 import DailyDashboard from "../Report/DailyDashboard";
 import MutationHistory from "../Report/MutationHistory";
 import VoucherHistory from "../Report/VoucherHistory";
-export default function DailyReport({ auth, data, charts, trx, hq, sales }) {
+import ExpenseTable from "../Report/ExpenseTable";
+export default function DailyReport({
+  auth,
+  data,
+  charts,
+  trx,
+  hq,
+  sales,
+  salesGroup,
+  mutation,
+}) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -21,10 +31,12 @@ export default function DailyReport({ auth, data, charts, trx, hq, sales }) {
             data={data}
             charts={charts}
             journals={trx}
+            mutation={mutation}
             warehouses={data.warehouses}
             hq={hq}
           />
-          <VoucherHistory data={data} sales={sales} />
+          <VoucherHistory data={data} sales={sales} salesGroup={salesGroup} />
+          <ExpenseTable data={data} />
         </div>
       </div>
     </AuthenticatedLayout>
