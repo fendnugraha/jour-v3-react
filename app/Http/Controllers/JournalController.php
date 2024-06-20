@@ -317,7 +317,7 @@ class JournalController extends Controller
         $journal->warehouse_id = Auth()->user()->roles->first()->warehouse_id;
         $journal->save();
 
-        return redirect()->route('dashboard')->with('success', 'Journal created successfully');
+        return redirect()->back()->with('success', 'Journal created successfully');
     }
 
     public function destroy($id)
