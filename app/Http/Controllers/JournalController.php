@@ -374,7 +374,7 @@ class JournalController extends Controller
 
         $chartOfAccounts = ChartOfAccount::where(fn ($query) => Auth()->user()->roles->role !== 'Administrator' ? $query->where('warehouse_id', $this->warehouse_id) : $query)->orderBy('acc_code', 'asc')->get();
         $journal = new Journal();
-        $journals = $journal->with('debt.account', 'cred.account', 'warehouse', 'user')
+        $journals = $journal->with('debt', 'cred', 'warehouse', 'user')
             ->whereBetween('date_issued', [$startDate, $endDate])
             ->where(function ($query) {
                 $query->where('invoice', 'like', '%' . $this->search . '%')
@@ -416,10 +416,22 @@ class JournalController extends Controller
         $startDate = Carbon::parse($this->endDate)->startOfDay();
         $endDate = Carbon::parse($this->endDate)->endOfDay();
 
-        $trx = Journal::whereBetween('date_issued', [$startDate, $endDate])
+        $trx = Journal::with(['debt', 'cred'])->whereBetween('date_issued', [$startDate, $endDate])
             ->where(fn ($query) => $this->warehouse_id == "" ?
                 $query : $query->where('warehouse_id', $this->warehouse_id))
             ->get();
+
+        $sales = Sale::with('product')
+            ->whereBetween('date_issued', [$startDate, $endDate])
+            ->where(function ($query) {
+                if ($this->warehouse_id > 1) {
+                    $query->where('warehouse_id', $this->warehouse_id);
+                }
+            })
+            ->whereHas('product', function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->paginate(5, ['*'], 'sales');
 
         $salesCount = $trx->whereIn('trx_type', ['Transfer Uang', 'Tarik Tunai', 'Deposit', 'Voucher & SP'])->Count();
 
@@ -444,6 +456,7 @@ class JournalController extends Controller
             'charts' => $charts,
             'trx' => $trx->where('trx_type', 'Mutasi Kas'),
             'hq' => ChartOfAccount::whereIn('account_id', [1, 2])->get(),
+            'sales' => $sales
         ]);
     }
 }

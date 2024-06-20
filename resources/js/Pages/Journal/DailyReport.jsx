@@ -2,7 +2,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import DailyDashboard from "../Report/DailyDashboard";
 import MutationHistory from "../Report/MutationHistory";
-export default function DailyReport({ auth, data, charts, trx, hq }) {
+import VoucherHistory from "../Report/VoucherHistory";
+export default function DailyReport({ auth, data, charts, trx, hq, sales }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -23,6 +24,7 @@ export default function DailyReport({ auth, data, charts, trx, hq }) {
             warehouses={data.warehouses}
             hq={hq}
           />
+          <VoucherHistory data={data} sales={sales} />
         </div>
       </div>
     </AuthenticatedLayout>

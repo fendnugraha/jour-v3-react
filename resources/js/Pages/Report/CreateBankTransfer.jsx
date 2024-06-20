@@ -33,8 +33,6 @@ export default function CreateBankTransfer({ charts, hq, warehouses }) {
     (account) => account.warehouse_id === branchAccountId
   );
 
-  console.log(branchAccountId, branchAccount);
-
   const submit = (e) => {
     e.preventDefault();
     post(route("journal.mutation.store"), {

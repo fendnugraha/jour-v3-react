@@ -63,10 +63,9 @@ export default function MutationHistory({
     });
     return sum;
   };
-
   return (
     <>
-      <div className="my-5">
+      <div className="my-5 bg-white p-3 rounded-lg">
         <button
           onClick={openModalCreateBankTransfer}
           className="w-full sm:w-40 bg-blue-500 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded-md mb-1 mr-2"
@@ -84,6 +83,7 @@ export default function MutationHistory({
             warehouses={warehouses}
           />
         </Modal>
+        <h1 className="my-3 font-bold">Mutasi Saldo</h1>
         <table className="table-auto w-full text-xs mb-2">
           <thead className="bg-white text-blue-950">
             <tr className="border-b">
@@ -127,6 +127,42 @@ export default function MutationHistory({
               </td>
             </tr>
           </tfoot>
+        </table>
+        <h1 className="my-3 font-bold">History Mutasi Saldo</h1>
+        <table className="table-auto w-full text-xs mb-2">
+          <thead className="bg-white text-blue-950">
+            <tr className="border-b">
+              <th className="text-center p-3">Waktu</th>
+              <th className="text-left p-3">Nama Akun</th>
+              <th className="text-center">Masuk (Debet)</th>
+              <th className="text-center">Keluar (Credit)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {journalsArr.map((journal) => (
+              <tr
+                key={journal.id}
+                className="border-b border-slate-100 odd:bg-white even:bg-blue-50"
+              >
+                <td className="text-center p-2">{journal.date_issued}</td>
+                <td className="p-2">
+                  <span className="font-bold text-slate-700">
+                    {journal.invoice}
+                    <br />
+                    {journal.cred.acc_name + " --> " + journal.debt.acc_name}
+                  </span>
+                </td>
+                <td className="text-right p-3">
+                  {accountsCode.includes(journal.debt_code) &&
+                    formatNumber(journal.amount)}
+                </td>
+                <td className="text-right p-3">
+                  {accountsCode.includes(journal.cred_code) &&
+                    formatNumber(journal.amount)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </>
